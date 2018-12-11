@@ -20,20 +20,12 @@ public:
 
 class EventComparisonNode : public Node {
 public:
-    EventComparisonNode(Comparison cmp, std::string event)
+    EventComparisonNode(Comparison cmp, const std::string& event)
     : cmp_(cmp)
     , event_(event)
     {}
-    bool Evaluate(const Date& date, const std::string& event) override {
-        switch (cmp_) {
-            case Comparison::Equal:
-                return event_ == event;
-            case Comparison::NotEqual:
-                return event_ != event; // default case??
-            default:
-                throw logic_error("impossible event comparison");
-        }
-    }
+
+    bool Evaluate(const Date& date, const std::string& event) override;
 private:
     Comparison cmp_;
     std::string event_;
@@ -45,22 +37,7 @@ public:
     : cmp_(cmp)
     , date_(date) {}
 
-    bool Evaluate(const Date& date, const std::string& event) override {
-        switch (cmp_) {
-            case Comparison::Less:
-                return date < date_;
-            case Comparison::LessOrEqual:
-                return date <= date_;
-            case Comparison::Greater:
-                return date > date_;
-            case Comparison::GreaterOrEqual:
-                return date >= date_;
-            case Comparison::Equal:
-                return date == date_;
-            case Comparison::NotEqual:
-                return date != date_;
-        }
-    }
+    bool Evaluate(const Date& date, const std::string& event) override;
 private:
     Comparison cmp_;
     Date date_;
@@ -68,26 +45,17 @@ private:
 
 class LogicalOperationNode : public Node {
 public:
-    LogicalOperationNode(const LogicalOperation& logical_operation, shared_ptr<Node> left, shared_ptr<Node> right)
+    LogicalOperationNode(const LogicalOperation& logical_operation, const shared_ptr<Node>& left, const shared_ptr<Node>& right)
     : logical_operation_(logical_operation)
     , left_(left)
     , right_(right) {}
 
-    bool Evaluate(const Date& date, const std::string& event) override {
-        switch (logical_operation_) {
-            case LogicalOperation::Or:
-                return left_->Evaluate(date, event) || right_->Evaluate(date, event);
-            case LogicalOperation::And:
-                return left_->Evaluate(date, event) && right_->Evaluate(date, event);
-        }
-    }
+    bool Evaluate(const Date& date, const std::string& event) override;
 private:
     LogicalOperation logical_operation_;
     shared_ptr<Node> left_, right_;
 };
 
 class EmptyNode : public Node {
-    bool Evaluate(const Date& date, const std::string& event) override {
-        return true;
-    }
+    bool Evaluate(const Date& date, const std::string& event) override;
 };
